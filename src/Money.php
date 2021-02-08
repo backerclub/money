@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Brick\Money;
 
-use Brick\Money\Context\DefaultContext;
-use Brick\Money\Exception\MoneyMismatchException;
-use Brick\Money\Exception\UnknownCurrencyException;
-
 use Brick\Math\BigDecimal;
 use Brick\Math\BigInteger;
 use Brick\Math\BigNumber;
 use Brick\Math\BigRational;
-use Brick\Math\RoundingMode;
 use Brick\Math\Exception\MathException;
 use Brick\Math\Exception\NumberFormatException;
 use Brick\Math\Exception\RoundingNecessaryException;
+use Brick\Math\RoundingMode;
+use Brick\Money\Context\DefaultContext;
+use Brick\Money\Exception\MoneyMismatchException;
+use Brick\Money\Exception\UnknownCurrencyException;
 
 /**
  * A monetary value in a given currency. This class is immutable.
@@ -70,14 +69,14 @@ class Money extends AbstractMoney
      *
      * If several monies are equal to the minimum value, the first one is returned.
      *
-     * @param Money    $money  The first money.
+     * @param Money $money     The first money.
      * @param Money ...$monies The subsequent monies.
      *
      * @return Money
      *
      * @throws MoneyMismatchException If all the monies are not in the same currency.
      */
-    public static function min(Money $money, Money ...$monies) : Money
+    public static function min(Money $money, Money ...$monies): self
     {
         $min = $money;
 
@@ -95,14 +94,14 @@ class Money extends AbstractMoney
      *
      * If several monies are equal to the maximum value, the first one is returned.
      *
-     * @param Money    $money  The first money.
+     * @param Money $money     The first money.
      * @param Money ...$monies The subsequent monies.
      *
      * @return Money
      *
      * @throws MoneyMismatchException If all the monies are not in the same currency.
      */
-    public static function max(Money $money, Money ...$monies) : Money
+    public static function max(Money $money, Money ...$monies): self
     {
         $max = $money;
 
@@ -120,14 +119,14 @@ class Money extends AbstractMoney
      *
      * The monies must share the same currency and context.
      *
-     * @param Money    $money  The first money.
+     * @param Money $money     The first money.
      * @param Money ...$monies The subsequent monies.
      *
      * @return Money
      *
      * @throws MoneyMismatchException If all the monies are not in the same currency and context.
      */
-    public static function total(Money $money, Money ...$monies) : Money
+    public static function total(Money $money, Money ...$monies): self
     {
         $total = $money;
 
@@ -150,7 +149,8 @@ class Money extends AbstractMoney
      *
      * @throws RoundingNecessaryException If RoundingMode::UNNECESSARY is used but rounding is necessary.
      */
-    public static function create(BigNumber $amount, Currency $currency, Context $context, int $roundingMode = RoundingMode::UNNECESSARY) : Money
+    public static function create(BigNumber $amount, Currency $currency, Context $context, int $roundingMode =
+    RoundingMode::UNNECESSARY): self
     {
         $amount = $context->applyTo($amount, $currency, $roundingMode);
 
@@ -179,9 +179,10 @@ class Money extends AbstractMoney
      * @throws RoundingNecessaryException If the rounding mode is RoundingMode::UNNECESSARY, and rounding is necessary
      *                                    to represent the amount at the requested scale.
      */
-    public static function of($amount, $currency, ?Context $context = null, int $roundingMode = RoundingMode::UNNECESSARY) : Money
+    public static function of($amount, $currency, ?Context $context = null, int $roundingMode =
+    RoundingMode::UNNECESSARY): self
     {
-        if (! $currency instanceof Currency) {
+        if (!$currency instanceof Currency) {
             $currency = Currency::of($currency);
         }
 
@@ -213,9 +214,10 @@ class Money extends AbstractMoney
      * @throws RoundingNecessaryException If the rounding mode is RoundingMode::UNNECESSARY, and rounding is necessary
      *                                    to represent the amount at the requested scale.
      */
-    public static function ofMinor($minorAmount, $currency, ?Context $context = null, int $roundingMode = RoundingMode::UNNECESSARY) : Money
+    public static function ofMinor($minorAmount, $currency, ?Context $context = null, int $roundingMode =
+    RoundingMode::UNNECESSARY): self
     {
-        if (! $currency instanceof Currency) {
+        if (!$currency instanceof Currency) {
             $currency = Currency::of($currency);
         }
 
@@ -239,9 +241,9 @@ class Money extends AbstractMoney
      *
      * @return Money
      */
-    public static function zero($currency, ?Context $context = null) : Money
+    public static function zero($currency, ?Context $context = null): self
     {
-        if (! $currency instanceof Currency) {
+        if (!$currency instanceof Currency) {
             $currency = Currency::of($currency);
         }
 
@@ -259,7 +261,7 @@ class Money extends AbstractMoney
      *
      * @return BigDecimal
      */
-    public function getAmount() : BigDecimal
+    public function getAmount(): BigDecimal
     {
         return $this->amount;
     }
@@ -274,7 +276,7 @@ class Money extends AbstractMoney
      *
      * @return BigDecimal
      */
-    public function getMinorAmount() : BigDecimal
+    public function getMinorAmount(): BigDecimal
     {
         return $this->amount->withPointMovedRight($this->currency->getDefaultFractionDigits());
     }
@@ -286,7 +288,7 @@ class Money extends AbstractMoney
      *
      * @return BigInteger
      */
-    public function getUnscaledAmount() : BigInteger
+    public function getUnscaledAmount(): BigInteger
     {
         return $this->amount->getUnscaledValue();
     }
@@ -296,7 +298,7 @@ class Money extends AbstractMoney
      *
      * @return Currency
      */
-    public function getCurrency() : Currency
+    public function getCurrency(): Currency
     {
         return $this->currency;
     }
@@ -306,7 +308,7 @@ class Money extends AbstractMoney
      *
      * @return Context
      */
-    public function getContext() : Context
+    public function getContext(): Context
     {
         return $this->context;
     }
@@ -330,7 +332,7 @@ class Money extends AbstractMoney
      * @throws MathException          If the argument is an invalid number or rounding is necessary.
      * @throws MoneyMismatchException If the argument is a money in a different currency or in a different context.
      */
-    public function plus($that, int $roundingMode = RoundingMode::UNNECESSARY) : Money
+    public function plus($that, int $roundingMode = RoundingMode::UNNECESSARY): self
     {
         $amount = $this->getAmountOf($that);
 
@@ -366,7 +368,7 @@ class Money extends AbstractMoney
      * @throws MathException          If the argument is an invalid number or rounding is necessary.
      * @throws MoneyMismatchException If the argument is a money in a different currency or in a different context.
      */
-    public function minus($that, int $roundingMode = RoundingMode::UNNECESSARY) : Money
+    public function minus($that, int $roundingMode = RoundingMode::UNNECESSARY): self
     {
         $amount = $this->getAmountOf($that);
 
@@ -397,7 +399,7 @@ class Money extends AbstractMoney
      *
      * @throws MathException If the argument is an invalid number or rounding is necessary.
      */
-    public function multipliedBy($that, int $roundingMode = RoundingMode::UNNECESSARY) : Money
+    public function multipliedBy($that, int $roundingMode = RoundingMode::UNNECESSARY): self
     {
         $amount = $this->amount->toBigRational()->multipliedBy($that);
 
@@ -418,7 +420,7 @@ class Money extends AbstractMoney
      *
      * @throws MathException If the argument is an invalid number or is zero, or rounding is necessary.
      */
-    public function dividedBy($that, int $roundingMode = RoundingMode::UNNECESSARY) : Money
+    public function dividedBy($that, int $roundingMode = RoundingMode::UNNECESSARY): self
     {
         $amount = $this->amount->toBigRational()->dividedBy($that);
 
@@ -437,7 +439,7 @@ class Money extends AbstractMoney
      *
      * @throws MathException If the divisor cannot be converted to a BigInteger.
      */
-    public function quotient($that) : Money
+    public function quotient($that): self
     {
         $that = BigInteger::of($that);
         $step = $this->context->getStep();
@@ -463,7 +465,7 @@ class Money extends AbstractMoney
      *
      * @throws MathException If the divisor cannot be converted to a BigInteger.
      */
-    public function quotientAndRemainder($that) : array
+    public function quotientAndRemainder($that): array
     {
         $that = BigInteger::of($that);
         $step = $this->context->getStep();
@@ -499,9 +501,9 @@ class Money extends AbstractMoney
      *
      * @throws \InvalidArgumentException If called with invalid parameters.
      */
-    public function allocate(int ...$ratios) : array
+    public function allocate(int ...$ratios): array
     {
-        if (! $ratios) {
+        if (!$ratios) {
             throw new \InvalidArgumentException('Cannot allocate() an empty list of ratios.');
         }
 
@@ -531,9 +533,9 @@ class Money extends AbstractMoney
         $remainder = $this;
 
         foreach ($ratios as $ratio) {
-            $money = $this->multipliedBy($ratio)->quotient($total);
+            $money     = $this->multipliedBy($ratio)->quotient($total);
             $remainder = $remainder->minus($money);
-            $monies[] = $money;
+            $monies[]  = $money;
         }
 
         foreach ($monies as $key => $money) {
@@ -542,7 +544,7 @@ class Money extends AbstractMoney
             }
 
             $monies[$key] = $money->plus($unit);
-            $remainder = $remainder->minus($unit);
+            $remainder    = $remainder->minus($unit);
         }
 
         return $monies;
@@ -565,7 +567,7 @@ class Money extends AbstractMoney
      *
      * @throws \InvalidArgumentException If called with invalid parameters.
      */
-    public function split(int $parts) : array
+    public function split(int $parts): array
     {
         if ($parts < 1) {
             throw new \InvalidArgumentException('Cannot split() into less than 1 part.');
@@ -581,7 +583,7 @@ class Money extends AbstractMoney
      *
      * @return Money
      */
-    public function abs() : Money
+    public function abs(): Money
     {
         return new Money($this->amount->abs(), $this->currency, $this->context);
     }
@@ -593,7 +595,7 @@ class Money extends AbstractMoney
      *
      * @return Money
      */
-    public function negated() : Money
+    public function negated(): self
     {
         return new Money($this->amount->negated(), $this->currency, $this->context);
     }
@@ -617,9 +619,9 @@ class Money extends AbstractMoney
      * @throws UnknownCurrencyException If an unknown currency code is given.
      * @throws MathException            If the exchange rate or rounding mode is invalid, or rounding is necessary.
      */
-    public function convertedTo($currency, $exchangeRate, ?Context $context = null, int $roundingMode = RoundingMode::UNNECESSARY) : Money
+    public function convertedTo($currency, $exchangeRate, ?Context $context = null, int $roundingMode = RoundingMode::UNNECESSARY): self
     {
-        if (! $currency instanceof Currency) {
+        if (!$currency instanceof Currency) {
             $currency = Currency::of($currency);
         }
 
@@ -642,7 +644,7 @@ class Money extends AbstractMoney
      *
      * @return string
      */
-    public function formatWith(\NumberFormatter $formatter) : string
+    public function formatWith(\NumberFormatter $formatter): string
     {
         return $formatter->formatCurrency(
             $this->amount->toFloat(),
@@ -661,14 +663,14 @@ class Money extends AbstractMoney
      *
      * @return string
      */
-    public function formatTo(string $locale, bool $allowWholeNumber = false) : string
+    public function formatTo(string $locale, bool $allowWholeNumber = false): string
     {
         /** @var \NumberFormatter|null $lastFormatter */
         static $lastFormatter = null;
         static $lastFormatterLocale;
         static $lastFormatterScale;
 
-        if ($allowWholeNumber && ! $this->amount->hasNonZeroFractionalPart()) {
+        if ($allowWholeNumber && !$this->amount->hasNonZeroFractionalPart()) {
             $scale = 0;
         } else {
             $scale = $this->amount->getScale();
@@ -689,9 +691,9 @@ class Money extends AbstractMoney
             $formatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, $scale);
             $formatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, $scale);
 
-            $lastFormatter = $formatter;
+            $lastFormatter       = $formatter;
             $lastFormatterLocale = $locale;
-            $lastFormatterScale = $scale;
+            $lastFormatterScale  = $scale;
         }
 
         return $this->formatWith($formatter);
@@ -700,7 +702,7 @@ class Money extends AbstractMoney
     /**
      * @return RationalMoney
      */
-    public function toRational() : RationalMoney
+    public function toRational(): RationalMoney
     {
         return new RationalMoney($this->amount->toBigRational(), $this->currency);
     }
@@ -710,7 +712,7 @@ class Money extends AbstractMoney
      *
      * @return string
      */
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->currency . ' ' . $this->amount;
     }
@@ -723,7 +725,7 @@ class Money extends AbstractMoney
      *
      * @throws MoneyMismatchException If monies don't match.
      */
-    protected function checkContext(Context $context, string $method) : void
+    protected function checkContext(Context $context, string $method): void
     {
         if ($this->context != $context) { // non-strict equality on purpose
             throw MoneyMismatchException::contextMismatch($method);
