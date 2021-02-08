@@ -149,12 +149,11 @@ class Money extends AbstractMoney
      *
      * @throws RoundingNecessaryException If RoundingMode::UNNECESSARY is used but rounding is necessary.
      */
-    public static function create(BigNumber $amount, Currency $currency, Context $context, int $roundingMode =
-    RoundingMode::UNNECESSARY): self
+    public static function create(BigNumber $amount, Currency $currency, Context $context, int $roundingMode = RoundingMode::UNNECESSARY): self
     {
         $amount = $context->applyTo($amount, $currency, $roundingMode);
 
-        return new Money($amount, $currency, $context);
+        return new static($amount, $currency, $context);
     }
 
     /**
@@ -179,8 +178,7 @@ class Money extends AbstractMoney
      * @throws RoundingNecessaryException If the rounding mode is RoundingMode::UNNECESSARY, and rounding is necessary
      *                                    to represent the amount at the requested scale.
      */
-    public static function of($amount, $currency, ?Context $context = null, int $roundingMode =
-    RoundingMode::UNNECESSARY): self
+    public static function of($amount, $currency, ?Context $context = null, int $roundingMode = RoundingMode::UNNECESSARY): self
     {
         if (!$currency instanceof Currency) {
             $currency = Currency::of($currency);
@@ -192,7 +190,7 @@ class Money extends AbstractMoney
 
         $amount = BigNumber::of($amount);
 
-        return self::create($amount, $currency, $context, $roundingMode);
+        return static::create($amount, $currency, $context, $roundingMode);
     }
 
     /**
@@ -214,8 +212,7 @@ class Money extends AbstractMoney
      * @throws RoundingNecessaryException If the rounding mode is RoundingMode::UNNECESSARY, and rounding is necessary
      *                                    to represent the amount at the requested scale.
      */
-    public static function ofMinor($minorAmount, $currency, ?Context $context = null, int $roundingMode =
-    RoundingMode::UNNECESSARY): self
+    public static function ofMinor($minorAmount, $currency, ?Context $context = null, int $roundingMode = RoundingMode::UNNECESSARY): self
     {
         if (!$currency instanceof Currency) {
             $currency = Currency::of($currency);
@@ -227,7 +224,7 @@ class Money extends AbstractMoney
 
         $amount = BigRational::of($minorAmount)->dividedBy(10 ** $currency->getDefaultFractionDigits());
 
-        return self::create($amount, $currency, $context, $roundingMode);
+        return static::create($amount, $currency, $context, $roundingMode);
     }
 
     /**
@@ -253,7 +250,7 @@ class Money extends AbstractMoney
 
         $amount = BigDecimal::zero();
 
-        return self::create($amount, $currency, $context);
+        return static::create($amount, $currency, $context);
     }
 
     /**
@@ -340,13 +337,13 @@ class Money extends AbstractMoney
             $this->checkContext($that->getContext(), __FUNCTION__);
 
             if ($this->context->isFixedScale()) {
-                return new Money($this->amount->plus($that->amount), $this->currency, $this->context);
+                return new static($this->amount->plus($that->amount), $this->currency, $this->context);
             }
         }
 
         $amount = $this->amount->toBigRational()->plus($amount);
 
-        return self::create($amount, $this->currency, $this->context, $roundingMode);
+        return static::create($amount, $this->currency, $this->context, $roundingMode);
     }
 
     /**
@@ -376,13 +373,13 @@ class Money extends AbstractMoney
             $this->checkContext($that->getContext(), __FUNCTION__);
 
             if ($this->context->isFixedScale()) {
-                return new Money($this->amount->minus($that->amount), $this->currency, $this->context);
+                return new static($this->amount->minus($that->amount), $this->currency, $this->context);
             }
         }
 
         $amount = $this->amount->toBigRational()->minus($amount);
 
-        return self::create($amount, $this->currency, $this->context, $roundingMode);
+        return static::create($amount, $this->currency, $this->context, $roundingMode);
     }
 
     /**
@@ -403,7 +400,7 @@ class Money extends AbstractMoney
     {
         $amount = $this->amount->toBigRational()->multipliedBy($that);
 
-        return self::create($amount, $this->currency, $this->context, $roundingMode);
+        return static::create($amount, $this->currency, $this->context, $roundingMode);
     }
 
     /**
@@ -424,7 +421,7 @@ class Money extends AbstractMoney
     {
         $amount = $this->amount->toBigRational()->dividedBy($that);
 
-        return self::create($amount, $this->currency, $this->context, $roundingMode);
+        return static::create($amount, $this->currency, $this->context, $roundingMode);
     }
 
     /**
@@ -450,7 +447,7 @@ class Money extends AbstractMoney
         $q = $amount->quotient($that);
         $q = $q->multipliedBy($step)->withPointMovedLeft($scale);
 
-        return new Money($q, $this->currency, $this->context);
+        return new static($q, $this->currency, $this->context);
     }
 
     /**
@@ -478,8 +475,8 @@ class Money extends AbstractMoney
         $q = $q->multipliedBy($step)->withPointMovedLeft($scale);
         $r = $r->multipliedBy($step)->withPointMovedLeft($scale);
 
-        $quotient  = new Money($q, $this->currency, $this->context);
-        $remainder = new Money($r, $this->currency, $this->context);
+        $quotient  = new static($q, $this->currency, $this->context);
+        $remainder = new static($r, $this->currency, $this->context);
 
         return [$quotient, $remainder];
     }
@@ -524,7 +521,7 @@ class Money extends AbstractMoney
         $monies = [];
 
         $unit = BigDecimal::ofUnscaledValue($step, $this->amount->getScale());
-        $unit = new Money($unit, $this->currency, $this->context);
+        $unit = new static($unit, $this->currency, $this->context);
 
         if ($this->isNegative()) {
             $unit = $unit->negated();
@@ -585,7 +582,7 @@ class Money extends AbstractMoney
      */
     public function abs(): Money
     {
-        return new Money($this->amount->abs(), $this->currency, $this->context);
+        return new static($this->amount->abs(), $this->currency, $this->context);
     }
 
     /**
@@ -597,7 +594,7 @@ class Money extends AbstractMoney
      */
     public function negated(): self
     {
-        return new Money($this->amount->negated(), $this->currency, $this->context);
+        return new static($this->amount->negated(), $this->currency, $this->context);
     }
 
     /**
@@ -631,7 +628,7 @@ class Money extends AbstractMoney
 
         $amount = $this->amount->toBigRational()->multipliedBy($exchangeRate);
 
-        return self::create($amount, $currency, $context, $roundingMode);
+        return static::create($amount, $currency, $context, $roundingMode);
     }
 
     /**
