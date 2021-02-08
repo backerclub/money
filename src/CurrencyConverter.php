@@ -18,7 +18,7 @@ use Brick\Math\RoundingMode;
  *       provide the context in the constructor, as this only applies to convert() and not convertToRational().
  *       This should probably be a parameter to convert().
  */
-final class CurrencyConverter
+class CurrencyConverter
 {
     /**
      * The exchange rate provider.

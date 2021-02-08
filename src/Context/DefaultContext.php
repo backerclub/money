@@ -13,7 +13,7 @@ use Brick\Math\BigNumber;
 /**
  * Adjusts a number to the default scale for the currency.
  */
-final class DefaultContext implements Context
+class DefaultContext implements Context
 {
     /**
      * @inheritdoc

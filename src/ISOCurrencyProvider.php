@@ -9,7 +9,7 @@ use Brick\Money\Exception\UnknownCurrencyException;
 /**
  * Provides ISO 4217 currencies.
  */
-final class ISOCurrencyProvider
+class ISOCurrencyProvider
 {
     /**
      * @var ISOCurrencyProvider|null

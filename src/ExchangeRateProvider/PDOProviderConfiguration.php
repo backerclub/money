@@ -9,7 +9,7 @@ namespace Brick\Money\ExchangeRateProvider;
  *
  * @psalm-suppress MissingConstructor
  */
-final class PDOProviderConfiguration
+class PDOProviderConfiguration
 {
     /**
      * The name of the table that holds the exchange rates. Required.

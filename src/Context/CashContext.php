@@ -13,7 +13,7 @@ use Brick\Math\BigNumber;
 /**
  * Adjusts a number to the default scale for the currency, respecting a cash rounding.
  */
-final class CashContext implements Context
+class CashContext implements Context
 {
     /**
      * The cash rounding step, in minor units.
