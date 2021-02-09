@@ -57,7 +57,7 @@ class Money extends AbstractMoney
      * @param Currency   $currency
      * @param Context    $context
      */
-    private function __construct(BigDecimal $amount, Currency $currency, Context $context)
+    public function __construct(BigDecimal $amount, Currency $currency, Context $context)
     {
         $this->amount   = $amount;
         $this->currency = $currency;
